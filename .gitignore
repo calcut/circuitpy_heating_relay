@@ -4,3 +4,4 @@ secrets.py
 .Trashes
 ._secrets.py
 .vscode/settings.json
+__pycache__
