@@ -32,7 +32,7 @@ def main():
     }
 
     # instantiate the MCU helper class to set up the system
-    mcu = Mcu(display=None)
+    mcu = Mcu()
 
     # Choose minimum logging level to process
     mcu.log.level = logging.INFO #i.e. ignore DEBUG messages
@@ -58,7 +58,7 @@ def main():
         mcu.pixel.brightness = 0.05
 
     except Exception as e:
-        mcu.log.error(e)
+        mcu.log_exception(e)
         mcu.pixel[0] = mcu.pixel.RED
 
     # Setup for Latching Relay Featherwing 
@@ -105,20 +105,20 @@ def main():
             mcu.aio_send(feeds)
 
 
-    timer_100ms = 0
-    timer_1s = 0
-    timer_30s = 0
+    timer_A = 0
+    timer_B = 0
+    timer_C = 0
 
     while True:
 
-        if (time.monotonic() - timer_100ms) >= 0.1:
-            timer_100ms = time.monotonic()
+        if (time.monotonic() - timer_A) >= 0.3:
+            timer_A = time.monotonic()
             mcu.watchdog.feed()
             mcu.aio_receive()
             parse_feeds()
 
-        if (time.monotonic() - timer_1s) >= 1:
-            timer_1s = time.monotonic()
+        if (time.monotonic() - timer_B) >= 1:
+            timer_B = time.monotonic()
             mcu.led.value = not(mcu.led.value)
 
             # 0.2 degrees hysteresis
@@ -141,8 +141,8 @@ def main():
                     heating_requested = "OFF"
                     mcu.io.publish('heating-requested', heating_requested)
             
-        if (time.monotonic() - timer_30s) >= 30:
-            timer_30s = time.monotonic()
+        if (time.monotonic() - timer_C) >= 30:
+            timer_C = time.monotonic()
             publish_feeds()
 
 if __name__ == "__main__":
