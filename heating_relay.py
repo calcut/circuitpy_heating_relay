@@ -120,6 +120,16 @@ def main():
         if (time.monotonic() - timer_B) >= 1:
             timer_B = time.monotonic()
             mcu.led.value = not(mcu.led.value)
+            if mcu.ota_requested:
+                ota_success = mcu.get_latest_release_ota()
+                if not ota_success:
+                    # print('OTA download failure, trying to continue')
+                    # mcu.ota_requested = False
+                    # mcu.io.connect()
+                    print('OTA download failure, Performing hard reset in 10s')
+                    time.sleep(10)
+                    microcontroller.reset()
+
 
             # 0.2 degrees hysteresis
             if heating_requested == "OFF":
